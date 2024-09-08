@@ -26,8 +26,6 @@ private:
     int _count;     // Current number of elements in the queue
 };
 
-#endif // ARRAYBASEDQUEUE_H
-
 template <typename T>
 ArrayBasedQueue<T>::ArrayBasedQueue(int capacity)
     : _capacity(capacity), _front(0), _rear(-1), _count(0)
@@ -47,6 +45,7 @@ void ArrayBasedQueue<T>::enqueue(T data)
     if (_count == _capacity) {
         throw std::overflow_error("Queue is full");
     }
+    //moving the pointers around instead of all the next values
     _rear = (_rear + 1) % _capacity;
     array[_rear] = data;
     _count++;
@@ -59,6 +58,7 @@ T ArrayBasedQueue<T>::dequeue()
         throw std::underflow_error("Queue is empty");
     }
     T data = array[_front];
+    //moving the pointers around instead of all the next values
     _front = (_front + 1) % _capacity;
     _count--;
     return data;
@@ -108,3 +108,5 @@ int ArrayBasedQueue<T>::size()
 {
     return _count;
 }
+
+#endif // ARRAYBASEDQUEUE_H
