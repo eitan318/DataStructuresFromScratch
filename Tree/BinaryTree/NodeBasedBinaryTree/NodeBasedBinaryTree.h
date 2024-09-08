@@ -11,20 +11,13 @@ struct Node {
 template <typename T>
 class NodeBasedBinaryTree : public IBinaryTree<T, Node<T>*>{
 public:
-    struct Node {
-        T value;
-        Node* left;
-        Node* right;
-        Node(T val) : value(val), left(nullptr), right(nullptr) {}
-    };
-
     NodeBasedBinaryTree();                     // Constructor
     ~NodeBasedBinaryTree();                    // Destructor
 
     void insert(T value) override;
     void remove(T value) override;
-    
-    std::optional<Node<T>*> search(T value) override
+
+    std::optional<Node<T>*> search(T value) override;
     void in_order_traversal() override;
     void pre_order_traversal() override;
     void post_order_traversal() override;
@@ -37,12 +30,18 @@ public:
     bool is_empty() override;
 
 private:
-    Node* root;                   // Root node
-    int node_count;                   // Number of nodes in the tree
-    void clear(Node* node);       // Helper function to clear nodes
-    int height(Node* node);       // Helper function to calculate height
-    void in_order_traversal(Node* node); // Helper function for in-order traversal
-    // Other private utility methods...
+    Node<T>* root;                   // Root node
+    int node_count;                 // Number of nodes in the tree
+
+    void clear(Node<T>* node);       // Helper function to clear nodes
+    int height(Node<T>* node);       // Helper function to calculate height
+    void in_order_traversal(Node<T>* node); // Helper function for in-order traversal
+    void pre_order_traversal(Node<T>* node); // Helper function for pre-order traversal
+    void post_order_traversal(Node<T>* node); // Helper function for post-order traversal
+    void level_order_traversal(Node<T>* node); // Helper function for level-order traversal
+    Node<T>* find_min_node(Node<T>* node); // Helper function to find the minimum node
+    Node<T>* find_max_node(Node<T>* node); // Helper function to find the maximum node
+    Node<T>* remove(Node<T>* node, T value); // Helper function to remove a node
 };
 
 // Constructor
