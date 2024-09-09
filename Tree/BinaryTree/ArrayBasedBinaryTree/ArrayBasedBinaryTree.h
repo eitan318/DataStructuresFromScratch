@@ -14,11 +14,12 @@ public:
     ArrayBasedBinaryTree(int capacity);
     ~ArrayBasedBinaryTree();
 
-    void insert(T value) override;
+    void depth_first_insert(T value) override;
+    void level_order_insert(T value) override;
     void remove(T value) override;
-    void in_order_traversal(std::function<void(int)> func) override;
-    void pre_order_traversal(std::function<void(int)> func) override;
-    void post_order_traversal(std::function<void(int)> func) override;
+    void in_order_traversal(std::function<bool(int)> func) override;
+    void pre_order_traversal(std::function<bool(int)> func) override;
+    void post_order_traversal(std::function<bool(int)> func) override;
     void level_order_traversal(std::function<void(int)> func) override;
 
     T find_min() override;
@@ -29,9 +30,9 @@ public:
     int search(T value) override;
 
 private:
-    void in_order_traversal(int index);
-    void pre_order_traversal(int index);
-    void post_order_traversal(int index);
+    void in_order_traversal(int index, std::function<bool(int)> func);
+    void pre_order_traversal(int index, std::function<bool(int)> func);
+    void post_order_traversal(int index, std::function<bool(int)> func);
 };
 
 template <typename T>
@@ -46,10 +47,6 @@ ArrayBasedBinaryTree<T>::~ArrayBasedBinaryTree() {
     delete[] this->tree;
 }
 
-template <typename T>
-void ArrayBasedBinaryTree<T>::insert(T value) {
-
-}
 
 template <typename T>
 void ArrayBasedBinaryTree<T>::remove(T value) {
@@ -57,32 +54,32 @@ void ArrayBasedBinaryTree<T>::remove(T value) {
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::in_order_traversal(int index) {
+void ArrayBasedBinaryTree<T>::in_order_traversal(int index, std::function<bool(int)> func) {
 
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::pre_order_traversal(int index) {
+void ArrayBasedBinaryTree<T>::pre_order_traversal(int index, std::function<bool(int)> func) {
 
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::post_order_traversal(int index) {
+void ArrayBasedBinaryTree<T>::post_order_traversal(int index, std::function<bool(int)> func) {
 
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::in_order_traversal(std::function<void(int)> func) {
+void ArrayBasedBinaryTree<T>::in_order_traversal(std::function<bool(int)> func) {
 
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::pre_order_traversal(std::function<void(int)> func) {
+void ArrayBasedBinaryTree<T>::pre_order_traversal(std::function<bool(int)> func) {
 
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::post_order_traversal(std::function<void(int)> func) {
+void ArrayBasedBinaryTree<T>::post_order_traversal(std::function<bool(int)> func) {
 }
 
 template <typename T>
@@ -113,6 +110,16 @@ int ArrayBasedBinaryTree<T>::size() {
 template <typename T>
 bool ArrayBasedBinaryTree<T>::is_empty() {
     return currentSize == 0;
+}
+
+template <typename T>
+void depth_first_insert(T value){
+
+}
+
+template <typename T>
+void level_order_insert(T value){
+
 }
 
 template <typename T>
