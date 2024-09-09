@@ -1,7 +1,7 @@
 #include <iostream>
 #include "SLLBasedQueue\SLLBasedQueue.h"
 #include "ArrayBasedQueue\ArrayBasedQueue.h"
-#include "PriorityQueue.h"
+//#include "PriorityQueue.h"
 
 
 
@@ -15,9 +15,9 @@ int main() {
     queue = new SLLBasedQueue<int>();
     check(queue);
     delete queue;
-    queue = new PriorityQueue<int>(100);
-    check(queue);
-    
+    //queue = new PriorityQueue<int>(100);
+    //check(queue);
+    //delete queue;
     return 0;
 }
 void check(IQueue<int>* queue) {

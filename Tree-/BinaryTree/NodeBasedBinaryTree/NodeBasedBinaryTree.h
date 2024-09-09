@@ -1,5 +1,6 @@
 #include "../IBinaryTree.h"
 #include <queue>
+#include <stack>
 #include <functional>
 #include <stdexcept>
 #include <algorithm>
@@ -34,6 +35,7 @@ public:
     int height() override;
     int size() override;
     bool is_empty() override;
+    T getValueAt(Node<T>* place) override;
 
 private:
     Node<T>* root;                   // Root node
@@ -102,19 +104,29 @@ void NodeBasedBinaryTree<T>::depth_first_insert(T value) {
         return;
     }
 
-    pre_order_traversal(root, [&](Node<T>* node) -> bool {
-        if (!node->left) {
-            node->left = new_node;
+    std::stack<Node<T>*> stack;
+    stack.push(root);
+
+    while (!stack.empty()) {
+        Node<T>* current = stack.top();
+        stack.pop();
+
+        if (!current->left) {
+            current->left = new_node;
             node_count++;
-            return true;
-        } else if (!node->right) {
-            node->right = new_node;
+            return;
+        } else if (!current->right) {
+            current->right = new_node;
             node_count++;
-            return true;
+            return;
         }
-        return false;
-    });
+
+        // Push children onto the stack
+        stack.push(current->right);
+        stack.push(current->left);
+    }
 }
+
 
 // Remove a value
 template <typename T>
@@ -307,4 +319,9 @@ T NodeBasedBinaryTree<T>::find_max() {
         return false;
     });
     return max_value;
+}
+
+template <typename T>
+T NodeBasedBinaryTree<T>::getValueAt(Node<T>* place){
+    return place->value;
 }
