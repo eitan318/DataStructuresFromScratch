@@ -1,9 +1,7 @@
 #ifndef IBINARYTREE_H
 #define IBINARYTREE_H
 
-#include <optional>
-
-template <typename T, typename ReturnType>
+template <typename T, typename NodeType>
 class IBinaryTree {
 public:
     virtual void insert(T value) = 0;
@@ -17,7 +15,7 @@ public:
     virtual int height() = 0;
     virtual int size() = 0;
     virtual bool is_empty() = 0;
-    std::optional<ReturnType> search(T value) override;  // Templated search method
+    virtual NodeType search(T value) = 0;
 };
 
 #endif // IBINARYTREE_H

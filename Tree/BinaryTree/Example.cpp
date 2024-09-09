@@ -1,29 +1,35 @@
 #include <iostream>
-#include <optional>
 #include "ArrayBasedBinaryTree/ArrayBasedBinaryTree.h"
 #include "NodeBasedBinaryTree/NodeBasedBinaryTree.h"
 
 // Template function to handle both types of trees
-template <typename T, typename SearchResult>
-void check(IBinaryTree<T, SearchResult>* tree);
+template <typename T, typename NodeType>
+void check(IBinaryTree<T, NodeType>* tree);
+template <typename T>
+void check_node_search(IBinaryTree<int, Node<int>*>* nodeTree, T value);
+template <typename T>
+void check_idx_search(IBinaryTree<int, int>* arrayTree, T value) ;
 
 int main() {
     // Create an ArrayBasedBinaryTree with a capacity of 15 nodes
     IBinaryTree<int, int>* arrayTree = new ArrayBasedBinaryTree<int>(15);
     check(arrayTree);
+    check_idx_search(arrayTree, 7);
     delete arrayTree;
 
     // Create a NodeBasedBinaryTree
     IBinaryTree<int, Node<int>*>* nodeTree = new NodeBasedBinaryTree<int>();
     check(nodeTree);
+    check_node_search(nodeTree, 7);
     delete nodeTree;
 
     return 0;
 }
 
 // Template function to check both ArrayBasedBinaryTree and NodeBasedBinaryTree
-template <typename T, typename SearchResult>
-void check(IBinaryTree<T, SearchResult>* tree) {
+template <typename T, typename NodeType>
+void check(IBinaryTree<T, NodeType>* tree) {
+    std::cout << "----------------------------------" << std::endl;
     // Insert some values
     tree->insert(10);
     tree->insert(5);
@@ -44,20 +50,9 @@ void check(IBinaryTree<T, SearchResult>* tree) {
     std::cout << "Post-Order Traversal: ";
     tree->post_order_traversal();
     std::cout << std::endl;
+    
+   
 
-    // Search for a value
-    T value = 7;
-    std::optional<SearchResult> searchResult = tree->search(value);
-
-    if (searchResult.has_value()) {
-        if constexpr (std::is_same<SearchResult, int>::value) {
-            std::cout << "Value " << value << " found at index " << searchResult.value() << std::endl;
-        } else if constexpr (std::is_pointer<SearchResult>::value) {
-            std::cout << "Value " << value << " found in node with value " << searchResult.value()->data << std::endl;
-        }
-    } else {
-        std::cout << "Value " << value << " not found in the tree." << std::endl;
-    }
 
     // Find minimum and maximum values
     std::cout << "Minimum value in the tree: " << tree->find_min() << std::endl;
@@ -74,4 +69,25 @@ void check(IBinaryTree<T, SearchResult>* tree) {
     std::cout << "After removing 15, In-Order Traversal: ";
     tree->in_order_traversal();
     std::cout << std::endl;
+}
+
+template <typename T>
+void check_idx_search(IBinaryTree<int, int>* arrayTree, T value) {
+    int searchResult = arrayTree->search(value);
+    if (searchResult != -1) {
+        std::cout << "Value " << value << " found at index " << searchResult << std::endl;
+    } else {
+        std::cout << "Value " << value << " not found in the tree." << std::endl;
+    }
+}
+
+template <typename T>
+void check_node_search(IBinaryTree<int, Node<int>*>* nodeTree, T value) {
+    Node<int>* searchResult = nodeTree->search(value);
+
+    if (searchResult != nullptr) {
+        std::cout << "Value " << value << " found at node: \nvalue:" << searchResult->value << "   left: "<< searchResult->left <<"   right: "<<searchResult->right <<  std::endl;
+    } else {
+        std::cout << "Value " << value << " not found in the tree." << std::endl;
+    }
 }

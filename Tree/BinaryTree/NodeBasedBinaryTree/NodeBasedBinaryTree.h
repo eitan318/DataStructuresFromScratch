@@ -1,7 +1,9 @@
 #include "../IBinaryTree.h"
+#include <queue>
 
 template <typename T>
-struct Node {
+class Node {
+public:
     T value;
     Node* left;
     Node* right;
@@ -9,7 +11,7 @@ struct Node {
 };
 
 template <typename T>
-class NodeBasedBinaryTree : public IBinaryTree<T, Node<T>*>{
+class NodeBasedBinaryTree : public IBinaryTree<T, Node<T>*> {
 public:
     NodeBasedBinaryTree();                     // Constructor
     ~NodeBasedBinaryTree();                    // Destructor
@@ -17,7 +19,7 @@ public:
     void insert(T value) override;
     void remove(T value) override;
 
-    std::optional<Node<T>*> search(T value) override;
+    Node<T>* search(T value) override;
     void in_order_traversal() override;
     void pre_order_traversal() override;
     void post_order_traversal() override;
@@ -25,7 +27,7 @@ public:
 
     T find_min() override;
     T find_max() override;
-    int height() override;    
+    int height() override;
     int size() override;
     bool is_empty() override;
 
@@ -57,20 +59,19 @@ NodeBasedBinaryTree<T>::~NodeBasedBinaryTree() {
 // Insert a value
 template <typename T>
 void NodeBasedBinaryTree<T>::insert(T value) {
-    // Empty implementation
+
 }
 
 // Remove a value
 template <typename T>
 void NodeBasedBinaryTree<T>::remove(T value) {
-    // Empty implementation
+
 }
 
 // Search for a value
 template <typename T>
-std::optional<Node<T>*> NodeBasedBinaryTree<T>::search(T value) {
-    // Empty implementation
-    return std::nullopt;
+Node<T>* NodeBasedBinaryTree<T>::search(T value) {
+
 }
 
 // In-order traversal
@@ -100,15 +101,15 @@ void NodeBasedBinaryTree<T>::level_order_traversal() {
 // Find minimum value
 template <typename T>
 T NodeBasedBinaryTree<T>::find_min() {
-    // Empty implementation
-    return T{};
+    Node<T>* minNode = find_min_node(root);
+    return minNode ? minNode->value : T{};
 }
 
 // Find maximum value
 template <typename T>
 T NodeBasedBinaryTree<T>::find_max() {
-    // Empty implementation
-    return T{};
+    Node<T>* maxNode = find_max_node(root);
+    return maxNode ? maxNode->value : T{};
 }
 
 // Calculate height
@@ -144,51 +145,71 @@ void NodeBasedBinaryTree<T>::clear(Node<T>* node) {
 // Calculate height of a node
 template <typename T>
 int NodeBasedBinaryTree<T>::height(Node<T>* node) {
-    // Empty implementation
-    return 0;
+    if (!node) return 0;
+    int leftHeight = height(node->left);
+    int rightHeight = height(node->right);
+    return 1 + std::max(leftHeight, rightHeight);
 }
 
 // In-order traversal of a node
 template <typename T>
 void NodeBasedBinaryTree<T>::in_order_traversal(Node<T>* node) {
-    // Empty implementation
+    if (node) {
+        in_order_traversal(node->left);
+        std::cout << node->value << " ";
+        in_order_traversal(node->right);
+    }
 }
 
 // Pre-order traversal of a node
 template <typename T>
 void NodeBasedBinaryTree<T>::pre_order_traversal(Node<T>* node) {
-    // Empty implementation
+    if (node) {
+        std::cout << node->value << " ";
+        pre_order_traversal(node->left);
+        pre_order_traversal(node->right);
+    }
 }
 
 // Post-order traversal of a node
 template <typename T>
 void NodeBasedBinaryTree<T>::post_order_traversal(Node<T>* node) {
-    // Empty implementation
+    if (node) {
+        post_order_traversal(node->left);
+        post_order_traversal(node->right);
+        std::cout << node->value << " ";
+    }
 }
 
 // Level-order traversal of a node
 template <typename T>
 void NodeBasedBinaryTree<T>::level_order_traversal(Node<T>* node) {
-    // Empty implementation
+    if (!node) return;
+    std::queue<Node<T>*> q;
+    q.push(node);
+    while (!q.empty()) {
+        Node<T>* current = q.front();
+        q.pop();
+        std::cout << current->value << " ";
+        if (current->left) q.push(current->left);
+        if (current->right) q.push(current->right);
+    }
 }
 
 // Find minimum node
 template <typename T>
 Node<T>* NodeBasedBinaryTree<T>::find_min_node(Node<T>* node) {
-    // Empty implementation
-    return nullptr;
+
 }
 
 // Find maximum node
 template <typename T>
 Node<T>* NodeBasedBinaryTree<T>::find_max_node(Node<T>* node) {
-    // Empty implementation
-    return nullptr;
+
 }
 
 // Remove a node
 template <typename T>
 Node<T>* NodeBasedBinaryTree<T>::remove(Node<T>* node, T value) {
-    // Empty implementation
-    return nullptr;
+
 }
