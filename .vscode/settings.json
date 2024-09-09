@@ -56,7 +56,10 @@
     "queue": "cpp",
     "ranges": "cpp",
     "span": "cpp",
-    "functional": "cpp"
+    "functional": "cpp",
+    "list": "cpp",
+    "unordered_map": "cpp",
+    "xhash": "cpp"
   },
 
   "files.exclude": {

@@ -16,10 +16,10 @@ public:
 
     void insert(T value) override;
     void remove(T value) override;
-    void in_order_traversal() override;
-    void pre_order_traversal() override;
-    void post_order_traversal() override;
-    void level_order_traversal() override;
+    void in_order_traversal(std::function<void(int)> func) override;
+    void pre_order_traversal(std::function<void(int)> func) override;
+    void post_order_traversal(std::function<void(int)> func) override;
+    void level_order_traversal(std::function<void(int)> func) override;
 
     T find_min() override;
     T find_max() override;
@@ -72,21 +72,21 @@ void ArrayBasedBinaryTree<T>::post_order_traversal(int index) {
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::in_order_traversal() {
+void ArrayBasedBinaryTree<T>::in_order_traversal(std::function<void(int)> func) {
 
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::pre_order_traversal() {
+void ArrayBasedBinaryTree<T>::pre_order_traversal(std::function<void(int)> func) {
 
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::post_order_traversal() {
+void ArrayBasedBinaryTree<T>::post_order_traversal(std::function<void(int)> func) {
 }
 
 template <typename T>
-void ArrayBasedBinaryTree<T>::level_order_traversal() {
+void ArrayBasedBinaryTree<T>::level_order_traversal(std::function<void(int)> func) {
 
 }
 

@@ -20,10 +20,10 @@ public:
     void remove(T value) override;
 
     Node<T>* search(T value) override;
-    void in_order_traversal() override;
-    void pre_order_traversal() override;
-    void post_order_traversal() override;
-    void level_order_traversal() override;
+    void in_order_traversal(std::function<void(Node<T>*)> func) override;
+    void pre_order_traversal(std::function<void(Node<T>*)> func) override;
+    void post_order_traversal(std::function<void(Node<T>*)> func) override;
+    void level_order_traversal(std::function<void(Node<T>*)> func) override;
 
     T find_min() override;
     T find_max() override;
@@ -37,10 +37,10 @@ private:
 
     void clear(Node<T>* node);       // Helper function to clear nodes
     int height(Node<T>* node);       // Helper function to calculate height
-    void in_order_traversal(Node<T>* node); // Helper function for in-order traversal
-    void pre_order_traversal(Node<T>* node); // Helper function for pre-order traversal
-    void post_order_traversal(Node<T>* node); // Helper function for post-order traversal
-    void level_order_traversal(Node<T>* node); // Helper function for level-order traversal
+    void in_order_traversal(Node<T>* node, std::function<void(Node<T>*)> func);
+    void pre_order_traversal(Node<T>* node, std::function<void(Node<T>*)> func);
+    void post_order_traversal(Node<T>* node, std::function<void(Node<T>*)> func);
+    void level_order_traversal(Node<T>* node, std::function<void(Node<T>*)> func);
     Node<T>* find_min_node(Node<T>* node); // Helper function to find the minimum node
     Node<T>* find_max_node(Node<T>* node); // Helper function to find the maximum node
     Node<T>* remove(Node<T>* node, T value); // Helper function to remove a node
@@ -74,29 +74,7 @@ Node<T>* NodeBasedBinaryTree<T>::search(T value) {
 
 }
 
-// In-order traversal
-template <typename T>
-void NodeBasedBinaryTree<T>::in_order_traversal() {
-    in_order_traversal(root);
-}
 
-// Pre-order traversal
-template <typename T>
-void NodeBasedBinaryTree<T>::pre_order_traversal() {
-    pre_order_traversal(root);
-}
-
-// Post-order traversal
-template <typename T>
-void NodeBasedBinaryTree<T>::post_order_traversal() {
-    post_order_traversal(root);
-}
-
-// Level-order traversal
-template <typename T>
-void NodeBasedBinaryTree<T>::level_order_traversal() {
-    level_order_traversal(root);
-}
 
 // Find minimum value
 template <typename T>
@@ -130,7 +108,78 @@ bool NodeBasedBinaryTree<T>::is_empty() {
     return root == nullptr;
 }
 
+// In-order traversal with a function
+template <typename T>
+void NodeBasedBinaryTree<T>::in_order_traversal(std::function<void(Node<T>*)> func) {
+    in_order_traversal(root, func);
+}
+
+
+
+// Pre-order traversal with a function
+template <typename T>
+void NodeBasedBinaryTree<T>::pre_order_traversal(std::function<void(Node<T>*)> func) {
+    pre_order_traversal(root, func);
+}
+
+
+
+// Post-order traversal with a function
+template <typename T>
+void NodeBasedBinaryTree<T>::post_order_traversal(std::function<void(Node<T>*)> func) {
+    post_order_traversal(root, func);
+}
+
+
+// Level-order traversal with a function
+template <typename T>
+void NodeBasedBinaryTree<T>::level_order_traversal(std::function<void(Node<T>*)> func) {
+    if (!root) return;
+    
+    std::queue<Node<T>*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        Node<T>* current = q.front();
+        q.pop();
+        func(current);
+
+        if (current->left) q.push(current->left);
+        if (current->right) q.push(current->right);
+    }
+}
+
 // Helper functions
+
+
+
+template <typename T>
+void NodeBasedBinaryTree<T>::in_order_traversal(Node<T>* node, std::function<void(Node<T>*)> func) {
+    if (node) {
+        in_order_traversal(node->left, func);
+        func(node);
+        in_order_traversal(node->right, func);
+    }
+}
+
+template <typename T>
+void NodeBasedBinaryTree<T>::post_order_traversal(Node<T>* node, std::function<void(Node<T>*)> func) {
+    if (node) {
+        post_order_traversal(node->left, func);
+        post_order_traversal(node->right, func);
+        func(node);
+    }
+}
+
+
+template <typename T>
+void NodeBasedBinaryTree<T>::pre_order_traversal(Node<T>* node, std::function<void(Node<T>*)> func) {
+    if (node) {
+        func(node);
+        pre_order_traversal(node->left, func);
+        pre_order_traversal(node->right, func);
+    }
+}
 
 // Clear nodes
 template <typename T>
@@ -151,50 +200,6 @@ int NodeBasedBinaryTree<T>::height(Node<T>* node) {
     return 1 + std::max(leftHeight, rightHeight);
 }
 
-// In-order traversal of a node
-template <typename T>
-void NodeBasedBinaryTree<T>::in_order_traversal(Node<T>* node) {
-    if (node) {
-        in_order_traversal(node->left);
-        std::cout << node->value << " ";
-        in_order_traversal(node->right);
-    }
-}
-
-// Pre-order traversal of a node
-template <typename T>
-void NodeBasedBinaryTree<T>::pre_order_traversal(Node<T>* node) {
-    if (node) {
-        std::cout << node->value << " ";
-        pre_order_traversal(node->left);
-        pre_order_traversal(node->right);
-    }
-}
-
-// Post-order traversal of a node
-template <typename T>
-void NodeBasedBinaryTree<T>::post_order_traversal(Node<T>* node) {
-    if (node) {
-        post_order_traversal(node->left);
-        post_order_traversal(node->right);
-        std::cout << node->value << " ";
-    }
-}
-
-// Level-order traversal of a node
-template <typename T>
-void NodeBasedBinaryTree<T>::level_order_traversal(Node<T>* node) {
-    if (!node) return;
-    std::queue<Node<T>*> q;
-    q.push(node);
-    while (!q.empty()) {
-        Node<T>* current = q.front();
-        q.pop();
-        std::cout << current->value << " ";
-        if (current->left) q.push(current->left);
-        if (current->right) q.push(current->right);
-    }
-}
 
 // Find minimum node
 template <typename T>
