@@ -2,16 +2,16 @@
 #include <cmath>
 #include <queue>
 #include "../IBinaryTree.h"
+#include "../../../Array-/DynamicArray/DynamicArray.h"
 
 template <typename T>
-class ArrayBasedBinaryTree : public IBinaryTree<T, int>  {
+class ArrayBasedBinaryTree : public IBinaryTree<T, int> {
 private:
-    T* tree;               // Array to store tree nodes
-    int currentSize;       // Number of elements currently in the tree
-    int capacity;          // Maximum capacity of the tree
+    DynamicArray<T>* tree;  // Using DynamicArray instead of raw array
+    int currentSize;        // Number of elements currently in the tree
 
 public:
-    ArrayBasedBinaryTree(int capacity);
+    ArrayBasedBinaryTree();
     ~ArrayBasedBinaryTree();
 
     void depth_first_insert(T value) override;
@@ -39,25 +39,21 @@ private:
 
 // Constructor
 template <typename T>
-ArrayBasedBinaryTree<T>::ArrayBasedBinaryTree(int capacity) {
-    this->capacity = capacity;
-    this->currentSize = 0;
-    this->tree = new T[capacity];
+ArrayBasedBinaryTree<T>::ArrayBasedBinaryTree() : currentSize(0) {
+    this->tree = new DynamicArray<T>();
 }
 
 // Destructor
 template <typename T>
 ArrayBasedBinaryTree<T>::~ArrayBasedBinaryTree() {
-    delete[] this->tree;
+    delete this->tree;
 }
 
 // Level-order insertion
 template <typename T>
 void ArrayBasedBinaryTree<T>::level_order_insert(T value) {
-    if (currentSize >= capacity) {
-        throw std::overflow_error("Tree capacity reached");
-    }
-    tree[currentSize++] = value;
+    tree->add(value);
+    currentSize++;
 }
 
 // Depth-first insertion (pre-order)
@@ -69,10 +65,11 @@ void ArrayBasedBinaryTree<T>::depth_first_insert(T value) {
 // Remove a value
 template <typename T>
 void ArrayBasedBinaryTree<T>::remove(T value) {
-    int index = search(value);
+    int index = this->search(value);
     if (index == -1) return;
 
-    tree[index] = tree[--currentSize];  // Replace with the last element and reduce size
+    (*tree)[index] = (*tree)[--currentSize];  // Replace with the last element and reduce size
+    tree->remove_at(currentSize);
 }
 
 // In-order traversal
@@ -112,7 +109,7 @@ void ArrayBasedBinaryTree<T>::post_order_traversal(int index, std::function<bool
 
     post_order_traversal(2 * index + 1, func);  // Left child
     post_order_traversal(2 * index + 2, func);  // Right child
-    if (func(tree[index])) return;
+    if (func(index)) return;
 }
 
 template <typename T>
@@ -133,10 +130,10 @@ template <typename T>
 T ArrayBasedBinaryTree<T>::find_min() {
     if (is_empty()) throw std::runtime_error("Tree is empty");
 
-    T min_value = tree[0];
+    T min_value = (*tree)[0];
     for (int i = 1; i < currentSize; ++i) {
-        if (tree[i] < min_value) {
-            min_value = tree[i];
+        if ((*tree)[i] < min_value) {
+            min_value = (*tree)[i];
         }
     }
     return min_value;
@@ -147,10 +144,10 @@ template <typename T>
 T ArrayBasedBinaryTree<T>::find_max() {
     if (is_empty()) throw std::runtime_error("Tree is empty");
 
-    T max_value = tree[0];
+    T max_value = (*tree)[0];
     for (int i = 1; i < currentSize; ++i) {
-        if (tree[i] > max_value) {
-            max_value = tree[i];
+        if ((*tree)[i] > max_value) {
+            max_value = (*tree)[i];
         }
     }
     return max_value;
@@ -179,7 +176,7 @@ bool ArrayBasedBinaryTree<T>::is_empty() {
 template <typename T>
 int ArrayBasedBinaryTree<T>::search(T value) {
     for (int i = 0; i < currentSize; ++i) {
-        if (tree[i] == value) {
+        if ((*tree)[i] == value) {
             return i;
         }
     }
@@ -187,6 +184,6 @@ int ArrayBasedBinaryTree<T>::search(T value) {
 }
 
 template <typename T>
-T ArrayBasedBinaryTree<T>::getValueAt(int place){
-    return this->tree[place];
+T ArrayBasedBinaryTree<T>::getValueAt(int place) {
+    return (*tree)[place];
 }

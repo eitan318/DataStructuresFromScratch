@@ -1,6 +1,6 @@
 #include <iostream>
-#include "SLLBasedQueue\SLLBasedQueue.h"
-#include "ArrayBasedQueue\ArrayBasedQueue.h"
+#include "SLLBasedQueue/SLLBasedQueue.h"
+#include "ArrayBasedQueue/ArrayBasedQueue.h"
 //#include "PriorityQueue.h"
 
 

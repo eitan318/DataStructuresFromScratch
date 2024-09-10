@@ -1,7 +1,7 @@
 #ifndef SLLBASEDQUEUE_H
 #define SLLBASEDQUEUE_H
 
-#include "SinglyLinkedList.h"
+#include "../../LinkedList-/SinglyLinkedList/SinglyLinkedList.h"
 #include "../IQueue.h"
 
 template <typename T>
