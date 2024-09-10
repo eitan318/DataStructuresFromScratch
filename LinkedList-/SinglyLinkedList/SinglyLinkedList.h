@@ -3,22 +3,23 @@
 
 #include <stdexcept>
 #include <iostream>
+#include "../ILinkedList.h"
+
 
 template <typename T>
-struct Node {
-    T data;
-    Node<T>* next;
-
-    Node(T value) : data(value), next(nullptr) {}
-};
-
-template <typename T>
-class SinglyLinkedList {
+class SinglyLinkedList : public ILinkedList<T> {
 private:
-    Node<T>* head;
-    Node<T>* tail;
+    struct Node {  // Node is nested inside SinglyLinkedList
+        T data;
+        Node* next;
+
+        Node(T value) : data(value), next(nullptr) {}
+    };
+
+    Node* head;
+    Node* tail;
     int count;
-    Node<T>* reverse_recursive(Node<T>* curr);
+    Node* reverse_recursive(Node* curr);
 
     static void default_print(T data) {
         std::cout << data << " ";
@@ -28,32 +29,32 @@ public:
     SinglyLinkedList() : head(nullptr), tail(nullptr), count(0) {}
     ~SinglyLinkedList();
 
-    void add_start(T value);
-    void add_end(T value);
-    void print(void (*print_func)(T) = default_print);
-    bool remove_node(T node_data);
-    T remove_at(int idx);
-    void insert_at(T data, int idx);
-    void reverse();
-    T get(int idx);
-    T get_last();
-    void set(int idx, T new_value);
-    void set_last(T new_value);
-    void move_node(int idxFrom, int idxTo);
-    void replace(int one_idx, int second_idx);
-    void free();
-    int Count();
-    bool is_empty();
+    void add_start(T value) override;
+    void add_end(T value) override;
+    void print(void (*print_func)(T) = default_print) override;
+    bool remove_node(T node_data) override;
+    T remove_at(int idx) override;
+    void insert_at(T data, int idx) override;
+    void reverse() override;
+    T get(int idx) override;
+    T get_last() override;
+    void set(int idx, T new_value) override;
+    void set_last(T new_value) override;
+    void move_node(int idxFrom, int idxTo) override;
+    void replace(int one_idx, int second_idx) override;
+    bool is_empty() override;
+    int Count() override;
+
 };
 
-#endif // LINKEDLIST_H
+
 
 template <typename T>
-Node<T>* SinglyLinkedList<T>::reverse_recursive(Node<T>* curr) {
+typename SinglyLinkedList<T>::Node* SinglyLinkedList<T>::reverse_recursive(Node* curr) {
     if (curr == nullptr || curr->next == nullptr) {
         return curr;
     }
-    Node<T>* new_head = reverse_recursive(curr->next);
+    Node* new_head = reverse_recursive(curr->next);
     curr->next->next = curr;
     curr->next = nullptr;
     return new_head;
@@ -61,7 +62,7 @@ Node<T>* SinglyLinkedList<T>::reverse_recursive(Node<T>* curr) {
 
 template <typename T>
 void SinglyLinkedList<T>::add_start(T value) {
-    Node<T>* new_node = new Node<T>(value);
+    Node* new_node = new Node(value);
     if (this->head == nullptr) {
         this->head = this->tail = new_node;
     }
@@ -74,7 +75,7 @@ void SinglyLinkedList<T>::add_start(T value) {
 
 template <typename T>
 void SinglyLinkedList<T>::add_end(T data) {
-    Node<T>* new_node = new Node<T>(data);
+    Node* new_node = new Node(data);
     if (this->tail == nullptr) {
         this->head = this->tail = new_node;
     }
@@ -87,7 +88,7 @@ void SinglyLinkedList<T>::add_end(T data) {
 
 template <typename T>
 void SinglyLinkedList<T>::print(void (*print_func)(T)) {
-    Node<T>* curr = this->head;
+    Node* curr = this->head;
     while (curr) {
         print_func(curr->data);
         curr = curr->next;
@@ -101,7 +102,7 @@ bool SinglyLinkedList<T>::remove_node(T node_data) {
         return false;
     }
 
-    Node<T>* curr = this->head;
+    Node* curr = this->head;
 
     if (curr->data == node_data) {
         this->head = curr->next;
@@ -113,7 +114,7 @@ bool SinglyLinkedList<T>::remove_node(T node_data) {
         return true;
     }
 
-    Node<T>* prev = nullptr;
+    Node* prev = nullptr;
 
     while (curr != nullptr && !(curr->data == node_data)) {
         prev = curr;
@@ -142,7 +143,7 @@ T SinglyLinkedList<T>::remove_at(int idx) {
         throw std::out_of_range("Index out of range!");
     }
 
-    Node<T>* curr = this->head;
+    Node* curr = this->head;
     T curr_data;
 
     if (idx == 0) {
@@ -156,7 +157,7 @@ T SinglyLinkedList<T>::remove_at(int idx) {
         return curr_data;
     }
 
-    Node<T>* prev = nullptr;
+    Node* prev = nullptr;
 
     for (int i = 0; i < idx && curr; i++) {
         prev = curr;
@@ -175,15 +176,15 @@ T SinglyLinkedList<T>::remove_at(int idx) {
 
 template <typename T>
 void SinglyLinkedList<T>::insert_at(T data, int idx) {
-    Node<T>* new_node = new Node<T>(data);
+    Node* new_node = new Node(data);
 
     if (this->head == nullptr && idx > 0) {
         delete new_node;
         throw std::runtime_error("An error occurred!");
     }
 
-    Node<T>* curr = this->head;
-    Node<T>* prev = nullptr;
+    Node* curr = this->head;
+    Node* prev = nullptr;
 
     if (idx == 0) {
         new_node->next = this->head;
@@ -220,7 +221,7 @@ T SinglyLinkedList<T>::get(int idx) {
         throw std::runtime_error("List is empty!");
     }
 
-    Node<T>* curr = this->head;
+    Node* curr = this->head;
 
     for (int i = 0; i < idx && curr; i++) {
         curr = curr->next;
@@ -247,7 +248,7 @@ void SinglyLinkedList<T>::set(int idx, T new_value) {
         throw std::runtime_error("List is empty!");
     }
 
-    Node<T>* curr = this->head;
+    Node* curr = this->head;
 
     for (int i = 0; i < idx && curr; i++) {
         curr = curr->next;
@@ -272,7 +273,7 @@ template <typename T>
 void SinglyLinkedList<T>::reverse() {
     this->head = reverse_recursive(this->head);
     if (this->head != nullptr) {
-        Node<T>* curr = this->head;
+        Node* curr = this->head;
         while (curr->next != nullptr) {
             curr = curr->next;
         }
@@ -286,8 +287,8 @@ void SinglyLinkedList<T>::move_node(int idxFrom, int idxTo) {
         return;
     }
 
-    Node<T>* prevFrom = nullptr;
-    Node<T>* nodeFrom = this->head;
+    Node* prevFrom = nullptr;
+    Node* nodeFrom = this->head;
 
     for (int i = 0; i < idxFrom; i++) {
         prevFrom = nodeFrom;
@@ -311,8 +312,8 @@ void SinglyLinkedList<T>::move_node(int idxFrom, int idxTo) {
         this->head = nodeFrom;
     }
     else {
-        Node<T>* prevTo = nullptr;
-        Node<T>* nodeTo = this->head;
+        Node* prevTo = nullptr;
+        Node* nodeTo = this->head;
         for (int i = 0; i < idxTo; i++) {
             prevTo = nodeTo;
             nodeTo = nodeTo->next;
@@ -331,16 +332,16 @@ void SinglyLinkedList<T>::replace(int one_idx, int second_idx) {
         return;
     }
 
-    Node<T>* prev_one = nullptr;
-    Node<T>* node_one = this->head;
+    Node* prev_one = nullptr;
+    Node* node_one = this->head;
 
     for (int i = 0; i < one_idx; i++) {
         prev_one = node_one;
         node_one = node_one->next;
     }
 
-    Node<T>* prev_two = nullptr;
-    Node<T>* node_two = this->head;
+    Node* prev_two = nullptr;
+    Node* node_two = this->head;
 
     for (int i = 0; i < second_idx; i++) {
         prev_two = node_two;
@@ -362,7 +363,7 @@ void SinglyLinkedList<T>::replace(int one_idx, int second_idx) {
     }
 
     // Swap next pointers
-    Node<T>* temp = node_one->next;
+    Node* temp = node_one->next;
     node_one->next = node_two->next;
     node_two->next = temp;
 
@@ -375,18 +376,6 @@ void SinglyLinkedList<T>::replace(int one_idx, int second_idx) {
     }
 }
 
-template <typename T>
-void SinglyLinkedList<T>::free() {
-    Node<T>* curr = this->head;
-    Node<T>* temp;
-    while (curr) {
-        temp = curr;
-        curr = curr->next;
-        delete temp;
-    }
-    this->head = this->tail = nullptr;
-    this->count = 0;
-}
 
 template <typename T>
 int SinglyLinkedList<T>::Count() {
@@ -400,7 +389,16 @@ bool SinglyLinkedList<T>::is_empty() {
 
 template <typename T>
 SinglyLinkedList<T>::~SinglyLinkedList() {
-    free();
+    Node* curr = this->head;
+    Node* temp;
+    while (curr) {
+        temp = curr;
+        curr = curr->next;
+        delete temp;
+    }
+    this->head = this->tail = nullptr;
+    this->count = 0;
 }
 
 
+#endif // SINGLYLINKEDLIST_H

@@ -3,8 +3,6 @@
 #include "ArrayBasedQueue/ArrayBasedQueue.h"
 //#include "PriorityQueue.h"
 
-
-
 void check(IQueue<int>* queue);
 
 int main() {

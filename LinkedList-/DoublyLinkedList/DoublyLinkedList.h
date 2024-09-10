@@ -4,56 +4,58 @@
 #include <stdexcept>
 #include <iostream>
 #include <stdbool.h>
+#include "../ILinkedList.h"
+
 
 template <typename T>
-struct Node {
-    T data;
-    Node<T>* next;
-    Node<T>* prev;
-
-    Node(T value) : data(value), next(nullptr), prev(nullptr){}
-};
-
-template <typename T>
-class DoublyLinkedList {
+class DoublyLinkedList : public ILinkedList<T>{
 private:
-    Node<T>* head;
-    Node<T>* tail;
+    struct Node {  
+        T data;
+        Node* next;
+        Node* prev;
+
+        Node(T value) : data(value), next(nullptr), prev(nullptr) {}
+    };
+
+    Node* head;
+    Node* tail;
 
     static void default_print(T data) {
         std::cout << data << " ";
     }
 
-    Node<T>* find_node_at(int idx);
-    std::pair<Node<T>*, Node<T>*> find_nodes_at(int idx1, int idx2);
+    int count;
+    Node* find_node_at(int idx);
+    std::pair<Node*, Node*> find_nodes_at(int idx1, int idx2);
 
 public:
-    int count;
+
     DoublyLinkedList() : head(nullptr), tail(nullptr) {}
     ~DoublyLinkedList();
 
-    void add_start(T value);
-    void add_end(T value);
-    void print(void (*print_func)(T) = default_print);
-    bool remove_node(T node_data);
-    bool remove_fast(T node_data);
-    T remove_at(int idx);
-    void insert_at(T data, int idx);
-    void reverse();
-    T get(int idx);
-    T get_last();
-    void set(int idx, T new_value);
-    void set_last(T new_value);
-    void move_node(int idxFrom, int idxTo);
-    void replace(int one_idx, int second_idx);
-    void free();
+    void add_start(T value) override;
+    void add_end(T value) override;
+    void print(void (*print_func)(T) = default_print) override;
+    bool remove_node(T node_data) override;
+    T remove_at(int idx) override;
+    void insert_at(T data, int idx) override;
+    void reverse() override;
+    T get(int idx) override;
+    T get_last() override;
+    void set(int idx, T new_value) override;
+    void set_last(T new_value) override;
+    void move_node(int idxFrom, int idxTo) override;
+    void replace(int one_idx, int second_idx) override;
+    int Count() override;
+    bool is_empty() override;
 };
 
 #endif // DOUBLYLINKEDLIST_H
 
 template <typename T>
 void DoublyLinkedList<T>::add_start(T value) {
-    Node<T>* new_node = new Node<T>(value);
+    Node* new_node = new Node(value);
     if (this->head == nullptr) {
         this->head = this->tail = new_node;
     }
@@ -67,7 +69,7 @@ void DoublyLinkedList<T>::add_start(T value) {
 
 template <typename T>
 void DoublyLinkedList<T>::add_end(T value) {
-    Node<T>* new_node = new Node<T>(value);
+    Node* new_node = new Node(value);
     if (this->tail == nullptr) {
         this->head = this->tail = new_node;
     }
@@ -83,7 +85,7 @@ void DoublyLinkedList<T>::add_end(T value) {
 
 template <typename T>
 void DoublyLinkedList<T>::print(void (*print_func)(T)) {
-    Node<T>* curr = this->head;
+    Node* curr = this->head;
     while (curr) {
         print_func(curr->data);
         curr = curr->next;
@@ -95,44 +97,11 @@ void DoublyLinkedList<T>::print(void (*print_func)(T)) {
 template <typename T>
 bool DoublyLinkedList<T>::remove_node(T node_data) {
     if (this->head == nullptr) {
-        return false;
-    }
-
-    Node<T>* curr = this->head;
-
-    if (curr->data == node_data) {
-        this->head = curr->next;
-        delete curr;
-        this->count--;
-        return true;
-    }
-
-    Node<T>* prev = nullptr;
-
-    while (curr != nullptr && !(curr->data == node_data)) {
-        prev = curr;
-        curr = curr->next;
-    }
-
-    if (curr == nullptr) {
-        return false;
-    }
-
-    prev->next = curr->next;
-    curr->next->prev = prev;
-    delete curr;
-    this->count--;
-    return true;
-}
-
-template <typename T>
-bool DoublyLinkedList<T>::remove_fast(T node_data) {
-    if (this->head == nullptr) {
         return false;  // List is empty
     }
 
-    Node<T>* curr_head = this->head;
-    Node<T>* curr_tail = this->tail;
+    Node* curr_head = this->head;
+    Node* curr_tail = this->tail;
 
     // Traverse from both ends towards the center
     while (curr_head != curr_tail && curr_head->next != curr_tail && curr_head->data != node_data && curr_tail->data != node_data) {
@@ -140,7 +109,7 @@ bool DoublyLinkedList<T>::remove_fast(T node_data) {
         curr_tail = curr_tail->prev;
     }
 
-    Node<T>* curr = nullptr;
+    Node* curr = nullptr;
 
     // Determine which node to remove
     if (curr_head->data == node_data) {
@@ -174,8 +143,9 @@ bool DoublyLinkedList<T>::remove_fast(T node_data) {
 }
 
 
+
 template <typename T>
-Node<T>* DoublyLinkedList<T>::find_node_at(int idx) {
+typename DoublyLinkedList<T>::Node* DoublyLinkedList<T>::find_node_at(int idx) {
     if (this->head == nullptr) {
         throw std::runtime_error("List is empty!");
     }
@@ -183,7 +153,7 @@ Node<T>* DoublyLinkedList<T>::find_node_at(int idx) {
         throw std::out_of_range("Index out of range!");
     }
 
-    Node<T>* curr = nullptr;
+    Node* curr = nullptr;
     if (idx < this->count / 2) {
         // Start from the head
         curr = this->head;
@@ -201,9 +171,8 @@ Node<T>* DoublyLinkedList<T>::find_node_at(int idx) {
     return curr;
 }
 
-// TODO: fix
 template <typename T>
-std::pair<Node<T>*, Node<T>*> DoublyLinkedList<T>::find_nodes_at(int idx1, int idx2) {
+std::pair<typename DoublyLinkedList<T>::Node*, typename DoublyLinkedList<T>::Node*> DoublyLinkedList<T>::find_nodes_at(int idx1, int idx2) {
     if (this->head == nullptr) {
         throw std::runtime_error("List is empty!");
     }
@@ -214,15 +183,15 @@ std::pair<Node<T>*, Node<T>*> DoublyLinkedList<T>::find_nodes_at(int idx1, int i
         throw std::out_of_range("Index2 out of range!");
     }
     if (idx1 == idx2) {
-        Node<T>* node = this->find_node_at(idx1);
+        Node* node = this->find_node_at(idx1);
         return std::make_pair(node, node);
     }
 
 
-    Node<T>* curr_head = this->head;
-    Node<T>* curr_tail = this->tail;
-    Node<T>* node1 = nullptr;
-    Node<T>* node2 = nullptr;
+    Node* curr_head = this->head;
+    Node* curr_tail = this->tail;
+    Node* node1 = nullptr;
+    Node* node2 = nullptr;
 
     if (idx1 < this->count / 2 && idx2 < this->count / 2) {
         // Start from the head
@@ -269,14 +238,13 @@ std::pair<Node<T>*, Node<T>*> DoublyLinkedList<T>::find_nodes_at(int idx1, int i
 
     return idx1 < idx2 ? std::make_pair(node1, node2) : std::make_pair(node2, node1);
 }
-
 template <typename T>
 T DoublyLinkedList<T>::remove_at(int idx) {
     if (idx < 0 || idx >= this->count) {
         throw std::out_of_range("Index out of range!");
     }
 
-    Node<T>* curr = this->find_node_at(idx);
+    Node* curr = this->find_node_at(idx);
     if (curr == nullptr) {
         throw std::runtime_error("Node not found!");
     }
@@ -308,20 +276,25 @@ T DoublyLinkedList<T>::remove_at(int idx) {
 
 template <typename T>
 void DoublyLinkedList<T>::insert_at(T data, int idx) {
-    Node<T>* curr = this->find_node_at(idx);
+   
+    if(idx == 0){
+        add_start(data);
+    }else{
+        Node* new_node = new Node(data);
+        Node* curr = this->find_node_at(idx - 1);
+        new_node->next = curr->next;
+        new_node->prev = curr;
+        curr->next->prev = new_node;
+        curr->next = new_node;
+        this->count++;
+    }
 
-    Node<T>* new_node = new Node<T>(data);
-    new_node->next = curr->next;
-    new_node->prev = curr;
-    curr->next->prev = new_node;
-    curr->next = new_node;
-    this->count++;
 }
 
 
 template <typename T>
 T DoublyLinkedList<T>::get(int idx) {
-    Node<T>* curr = this->find_node_at(idx);
+    Node* curr = this->find_node_at(idx);
 
     return curr->data;
 }
@@ -337,7 +310,7 @@ T DoublyLinkedList<T>::get_last() {
 
 template <typename T>
 void DoublyLinkedList<T>::set(int idx, T new_value) {
-    Node<T>* curr = this->find_node_at(idx);
+    Node* curr = this->find_node_at(idx);
 
     curr->data = new_value;
 }
@@ -359,10 +332,10 @@ void DoublyLinkedList<T>::reverse() {
     if (this->count <= 1) {
         return;  // List is empty
     }
-    Node<T>* temp_head = this->head;
-    Node<T>* temp_tail = this->tail;
-    Node<T>* curr_head = this->head;
-    Node<T>* curr_tail = this->tail;
+    Node* temp_head = this->head;
+    Node* temp_tail = this->tail;
+    Node* curr_head = this->head;
+    Node* curr_tail = this->tail;
 
     // Traverse from both ends towards the center
     while (curr_head != curr_tail && curr_head->next != curr_tail) {
@@ -381,38 +354,66 @@ void DoublyLinkedList<T>::reverse() {
 }
 
 
-
-//todo
 template <typename T>
 void DoublyLinkedList<T>::move_node(int idx_from, int idx_to) {
     if (idx_from == idx_to) {
         return;
     }
+    
     auto nodes = this->find_nodes_at(idx_from, idx_to);
-    Node<T>* node_to_move = nodes.first;
-    //move from origen
-    node_to_move->prev->next = node_to_move->next;
-    node_to_move->next->prev = node_to_move->prev;
+    Node* node_to_move = nodes.first;
+
+    if (node_to_move->prev) {
+        node_to_move->prev->next = node_to_move->next;
+    } else {
+        this->head = node_to_move->next;
+    }
+
+    if (node_to_move->next) {
+        node_to_move->next->prev = node_to_move->prev;
+    } else {
+        this->tail = node_to_move->prev;
+    }
 
     if (idx_from < idx_to) {
-        Node<T>* prev_target = nodes.second;
-        //insert after
-        prev_target->next->prev = node_to_move;
+        // Insert node_to_move after the target node (second node)
+        Node* prev_target = nodes.second;
         node_to_move->next = prev_target->next;
         node_to_move->prev = prev_target;
+
+        if (prev_target->next) {
+            prev_target->next->prev = node_to_move;
+        } else {
+            this->tail = node_to_move;
+        }
+
         prev_target->next = node_to_move;
-    }
-    else {
-        Node<T>* target = nodes.second;
-        //insert before
-        target->prev->next = node_to_move;
-        node_to_move->prev = target->prev;
+    } else {
+        Node* target = nodes.second;
         node_to_move->next = target;
+        node_to_move->prev = target->prev;
+
+        if (target->prev) {
+            target->prev->next = node_to_move;
+        } else {
+            this->head = node_to_move;
+        }
+
         target->prev = node_to_move;
     }
-
 }
 
+
+template <typename T>
+int DoublyLinkedList<T>::Count() {
+    return this->count;
+}
+
+template <typename T>
+inline bool DoublyLinkedList<T>::is_empty()
+{
+    return this->count == 0;
+}
 
 template <typename T>
 void DoublyLinkedList<T>::replace(int idx1, int idx2) {
@@ -421,10 +422,10 @@ void DoublyLinkedList<T>::replace(int idx1, int idx2) {
     }
 
     auto nodes = this->find_nodes_at(idx1, idx2);
-    Node<T>* after_first = nodes.first->next;
-    Node<T>* before_first = nodes.first->prev;
-    Node<T>* after_second = nodes.second->next;
-    Node<T>* before_second = nodes.second->prev;
+    Node* after_first = nodes.first->next;
+    Node* before_first = nodes.first->prev;
+    Node* after_second = nodes.second->next;
+    Node* before_second = nodes.second->prev;
 
     // Update pointers of adjacent nodes
     if (after_first != nullptr) {
@@ -456,29 +457,22 @@ void DoublyLinkedList<T>::replace(int idx1, int idx2) {
     }
 
     // Finalize swapping nodes
-    nodes.first->prev = before_second;
-    nodes.second->prev = before_first;
-    nodes.first->next = after_second;
-    nodes.second->next = after_first;
+    nodes.first->prev = before_second == nodes.first ? nodes.second : before_second;
+    nodes.second->prev = before_first == nodes.second ? nodes.first : before_first;
+    nodes.first->next = after_second == nodes.first ? nodes.second : after_second;
+    nodes.second->next = after_first == nodes.second ? nodes.first : after_first;
+
 }
 
 
-
 template <typename T>
-void DoublyLinkedList<T>::free() {
-    Node<T>* temp = this->head;
+DoublyLinkedList<T>::~DoublyLinkedList() {
+    Node* temp = this->head;
     while (this->head) {
         temp = this->head;
         this->head = this->head->next;
         delete temp;
     }
-}
-
-
-
-template <typename T>
-DoublyLinkedList<T>::~DoublyLinkedList() {
-    free();
 }
 
 
