@@ -17,7 +17,7 @@ private:
     }
 
 public:
-    CircularLinkedList() : head(nullptr), tail(nullptr), count(0) {}
+    CircularLinkedList() : last(nullptr), count(0) {}
     ~CircularLinkedList();
 
     void add_start(T value) override;
@@ -69,41 +69,115 @@ inline void CircularLinkedList<T>::add_end(T value)
 }
 
 template <typename T>
-inline void CircularLinkedList<T>::print(void (*print_func)(T))
-{
-    if(this->last == nullptr){
-        return;
-    }
+inline void CircularLinkedList<T>::print(void (*print_func)(T)) {
+    if (this->last == nullptr) return;
     Node* curr = this->last->next;
-    while(curr != this->last) {
-        print_func(curr->value);
-    }
+    do {
+        print_func(curr->data);
+        curr = curr->next;
+    } while (curr != this->last->next);
+    std::cout << std::endl;
 }
 
+
 template <typename T>
-inline bool CircularLinkedList<T>::remove_node(T node_data)
-{
-    if(this->last == nullptr){
-        return false;
+inline bool CircularLinkedList<T>::remove_node(T node_data) {
+    if (this->last == nullptr) return false;
+
+    Node* curr = this->last->next;
+    Node* prev = this->last;
+
+    do {
+        if (curr->data == node_data) {
+            prev->next = curr->next;
+            if (curr == this->last) {
+                if (curr == prev) {
+                    this->last = nullptr; // List becomes empty
+                } else {
+                    this->last = prev;
+                }
+            }
+            delete curr;
+            count--;
+            return true;
+        }
+        prev = curr;
+        curr = curr->next;
+    } while (curr != this->last->next);
+
+    return false;
+}
+
+
+template <typename T>
+inline T CircularLinkedList<T>::remove_at(int idx) {
+    if (idx < 0 || idx >= this->count) {
+        std::cerr << "Index out of range." << std::endl;
+        return T(); // Return default value of T
     }
 
     Node* curr = this->last->next;
     Node* prev = this->last;
 
-    while(curr != this->last) {
-        if(curr->data == node_data){
-            prev->next = curr->next;
-            delete curr;
-            return true; 
-        }
+    for (int i = 0; i < idx; i++) {
+        prev = curr;
         curr = curr->next;
-        prev = prev->next;   
     }
-    return false;
+
+    prev->next = curr->next;
+    if (curr == this->last) {
+        this->last = prev;
+    }
+
+    T value = curr->data;
+    delete curr;
+    count--;
+    return value;
 }
 
 template <typename T>
-inline T CircularLinkedList<T>::remove_at(int idx)
+inline T CircularLinkedList<T>::get(int idx) {
+    if (idx < 0 || idx >= this->count) {
+        std::cerr << "Index out of range." << std::endl;
+        return T(); // Return default value of T
+    }
+
+    Node* curr = this->last->next;
+    for (int i = 0; i < idx; i++) {
+        curr = curr->next;
+    }
+
+    return curr->data;
+}
+
+template <typename T>
+inline void CircularLinkedList<T>::reverse() {
+    if (this->last == nullptr) return;
+
+    Node* prev = this->last;
+    Node* curr = this->last->next;
+    Node* next = nullptr;
+    Node* first = curr;
+
+    do {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    } while (prev != this->last);
+
+    this->last = first;
+}
+
+
+template <typename T>
+inline T CircularLinkedList<T>::get_last()
+{
+    return this->last->value;
+}
+
+template <typename T>
+inline void CircularLinkedList<T>::set(int idx, T new_value)
 {
     if(idx < 0 || idx >= this->count){
         std::cerr << "idx out of range." << std::endl;
@@ -120,46 +194,14 @@ inline T CircularLinkedList<T>::remove_at(int idx)
         curr = curr->next;
         prev = prev->next;
     }
-
-    prev->next = curr->next;
-    return curr; 
-}
-
-template <typename T>
-inline void CircularLinkedList<T>::reverse()
-{
-}
-
-template <typename T>
-inline T CircularLinkedList<T>::get(int idx)
-{
-    return T();
-}
-
-template <typename T>
-inline T CircularLinkedList<T>::get_last()
-{
-    return T();
-}
-
-template <typename T>
-inline void CircularLinkedList<T>::set(int idx, T new_value)
-{
+    
+    curr->value = new_value; 
 }
 
 template <typename T>
 inline void CircularLinkedList<T>::set_last(T new_value)
 {
-}
-
-template <typename T>
-inline void CircularLinkedList<T>::move_node(int idxFrom, int idxTo)
-{
-}
-
-template <typename T>
-inline void CircularLinkedList<T>::replace(int one_idx, int second_idx)
-{
+    this->last->value = new_value;
 }
 
 template <typename T>
@@ -173,3 +215,73 @@ inline int CircularLinkedList<T>::Count()
 {
     return this->count;
 }
+
+template <typename T>
+inline void CircularLinkedList<T>::move_node(int idxFrom, int idxTo)
+{
+    
+    if (idxFrom == idxTo || idxFrom < 0 || idxTo < 0 || idxFrom >= this->count || idxTo >= this->count || this->last == nullptr) {
+        return;
+    }
+
+    Node* prevFrom = this->last;
+    Node* nodeFrom = this->last->next;
+
+    for (int i = 0; i < idxFrom; i++) {
+        prevFrom = nodeFrom;
+        nodeFrom = nodeFrom->next;
+    }
+
+    // Remove nodeFrom from its position
+    if (prevFrom != nullptr) {
+        prevFrom->next = nodeFrom->next;
+    }
+    else { 
+        this->last = nodeFrom->next;
+    }
+    if (nodeFrom == this->last) {
+        this->last = prevFrom;
+    }
+
+    if (idxTo == 0) {
+        // Insert at the head
+        nodeFrom->next = this->last->next;
+        this->last->next = nodeFrom;
+    }
+    else {
+        Node* prevTo = nullptr;
+        Node* nodeTo = this->last->next;
+        for (int i = 0; i < idxTo; i++) {
+            prevTo = nodeTo;
+            nodeTo = nodeTo->next;
+        }
+        prevTo->next = nodeFrom;
+        nodeFrom->next = nodeTo;
+        if (nodeTo == nullptr) {
+            this->last = nodeFrom;
+        }
+    }
+}
+
+template <typename T>
+inline void CircularLinkedList<T>::replace(int one_idx, int second_idx) {
+    if (one_idx < 0 || one_idx >= this->count || second_idx < 0 || second_idx >= this->count) {
+        std::cerr << "Index out of range." << std::endl;
+        return;
+    }
+
+    Node* node1 = this->last->next;
+    for (int i = 0; i < one_idx; i++) {
+        node1 = node1->next;
+    }
+
+    Node* node2 = this->last->next;
+    for (int i = 0; i < second_idx; i++) {
+        node2 = node2->next;
+    }
+
+    //tried data swap witch is simpler tham pointer swap
+    std::swap(node1->data, node2->data);
+}
+
+

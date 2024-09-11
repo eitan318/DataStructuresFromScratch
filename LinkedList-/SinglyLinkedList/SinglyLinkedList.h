@@ -348,17 +348,18 @@ void SinglyLinkedList<T>::replace(int one_idx, int second_idx) {
         node_two = node_two->next;
     }
 
+    //pointer swap, more complected:
     if (prev_one != nullptr) {
         prev_one->next = node_two;
     }
-    else {  // node_one is head
+    else {
         this->head = node_two;
     }
 
     if (prev_two != nullptr) {
         prev_two->next = node_one;
     }
-    else {  // node_two is head
+    else { 
         this->head = node_one;
     }
 
@@ -367,7 +368,7 @@ void SinglyLinkedList<T>::replace(int one_idx, int second_idx) {
     node_one->next = node_two->next;
     node_two->next = temp;
 
-    // Handle tail pointer if needed
+    
     if (node_one->next == nullptr) {
         this->tail = node_one;
     }

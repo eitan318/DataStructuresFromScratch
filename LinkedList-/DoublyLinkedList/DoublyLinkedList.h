@@ -422,6 +422,11 @@ void DoublyLinkedList<T>::replace(int idx1, int idx2) {
     }
 
     auto nodes = this->find_nodes_at(idx1, idx2);
+
+
+    //A simpler way to swap is data swap: 
+    //std::swap(nodes.first->data, nodes.second->data);
+    //Here I did pointer swap:
     Node* after_first = nodes.first->next;
     Node* before_first = nodes.first->prev;
     Node* after_second = nodes.second->next;
