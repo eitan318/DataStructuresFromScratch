@@ -1,3 +1,6 @@
+#ifndef CIRCULARLINKEDLIST_H
+#define CIRCULARLINKEDLIST_H
+
 template <typename T>
 class CircularLinkedList : public ILinkedList<T> {
 private:
@@ -285,3 +288,4 @@ inline void CircularLinkedList<T>::replace(int one_idx, int second_idx) {
 }
 
 
+#endif // CIRCULARLINKEDLIST_H

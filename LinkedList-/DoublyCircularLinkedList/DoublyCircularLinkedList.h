@@ -1,5 +1,5 @@
-#ifndef DOUBLYLINKEDLIST_H
-#define DOUBLYLINKEDLIST_H
+#ifndef DOUBLYCIRCULARLINKEDLIST_H
+#define DOUBLYCIRCULARLINKEDLIST_H
 
 #include <stdexcept>
 #include <iostream>
@@ -49,33 +49,38 @@ public:
     bool is_empty() override;
 };
 
-#endif // DOUBLYLINKEDLIST_H
+
 
 template <typename T>
 void DoublyCircularLinkedList<T>::add_start(T value) {
     Node* new_node = new Node(value);
     if (this->head == nullptr) {
         this->head = new_node;
-    }
-    else {
-        this->head->prev = new_node;
+        new_node->next = new_node;
+        new_node->prev = new_node;
+    } else {
+        Node* tail = this->head->prev;
         new_node->next = this->head;
+        new_node->prev = tail;
+        tail->next = new_node;
+        this->head->prev = new_node;
         this->head = new_node;
     }
-    this->head->prev->next = this->head;
-    this->head->prev = this->head->prev;
     this->count++;
 }
 
 template <typename T>
 void DoublyCircularLinkedList<T>::add_end(T value) {
     Node* new_node = new Node(value);
-    if (this->head->prev == nullptr) {
-        this->head = this->tail = new_node;
-    }
-    else {
-        new_node->prev = this->head->prev;
-        this->head->prev->next = new_node;
+    if (this->head == nullptr) {
+        this->head = new_node;
+        new_node->next = new_node;
+        new_node->prev = new_node;
+    } else {
+        Node* tail = this->head->prev;
+        tail->next = new_node;
+        new_node->prev = tail;
+        new_node->next = this->head;
         this->head->prev = new_node;
     }
     this->count++;
@@ -85,11 +90,13 @@ void DoublyCircularLinkedList<T>::add_end(T value) {
 
 template <typename T>
 void DoublyCircularLinkedList<T>::print(void (*print_func)(T)) {
+    if (!this->head) return;
+
     Node* curr = this->head;
-    while (curr) {
+    do {
         print_func(curr->data);
         curr = curr->next;
-    }
+    } while (curr != this->head);
     std::cout << std::endl;
 }
 
@@ -100,46 +107,33 @@ bool DoublyCircularLinkedList<T>::remove_node(T node_data) {
         return false;  // List is empty
     }
 
-    Node* curr_head = this->head;
-    Node* curr_tail = this->head->prev;
+    Node* curr = this->head;
+    Node* prev = nullptr;
 
-    // Traverse from both ends towards the center
-    while (curr_head != curr_tail && curr_head->next != curr_tail && curr_head->data != node_data && curr_tail->data != node_data) {
-        curr_head = curr_head->next;
-        curr_tail = curr_tail->prev;
-    }
+    do {
+        if (curr->data == node_data) {
+            if (prev) {
+                prev->next = curr->next;
+                curr->next->prev = prev;
+            } else {
+                this->head = curr->next;
+                if (this->count == 1) {
+                    this->head = nullptr;
+                } else {
+                    Node* tail = curr->prev;
+                    this->head->prev = tail;
+                    tail->next = this->head;
+                }
+            }
+            delete curr;
+            this->count--;
+            return true;
+        }
+        prev = curr;
+        curr = curr->next;
+    } while (curr != this->head);
 
-    Node* curr = nullptr;
-
-    // Determine which node to remove
-    if (curr_head->data == node_data) {
-        curr = curr_head;
-    }
-    else if (curr_tail->data == node_data) {
-        curr = curr_tail;
-    }
-    else {
-        return false;  // Node not found
-    }
-
-    // Adjust pointers and remove the node
-    if (curr->prev != nullptr) {
-        curr->prev->next = curr->next;
-    }
-    else {  // Node is head
-        this->head = curr->next;
-    }
-
-    if (curr->next != nullptr) {
-        curr->next->prev = curr->prev;
-    }
-    else {  // Node is tail
-        this->head->prev = curr->prev;
-    }
-
-    delete curr;
-    this->count--;
-    return true;
+    return false;
 }
 
 
@@ -469,14 +463,10 @@ void DoublyCircularLinkedList<T>::replace(int idx1, int idx2) {
 
 }
 
-
 template <typename T>
 DoublyCircularLinkedList<T>::~DoublyCircularLinkedList() {
-    Node* temp = this->head;
-    while (this->head) {
-        temp = this->head;
-        this->head = this->head->next;
-        delete temp;
+    while (this->count > 0) {
+        remove_at(0);
     }
 }
 
@@ -484,3 +474,5 @@ DoublyCircularLinkedList<T>::~DoublyCircularLinkedList() {
 
 
 
+
+#endif // DOUBLYCIRCULARLINKEDLIST_H

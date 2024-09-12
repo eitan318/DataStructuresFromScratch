@@ -51,7 +51,7 @@ public:
     bool is_empty() override;
 };
 
-#endif // DOUBLYLINKEDLIST_H
+
 
 template <typename T>
 void DoublyLinkedList<T>::add_start(T value) {
@@ -484,3 +484,4 @@ DoublyLinkedList<T>::~DoublyLinkedList() {
 
 
 
+#endif // DOUBLYLINKEDLIST_H
