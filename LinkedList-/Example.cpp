@@ -1,5 +1,7 @@
 #include "SinglyLinkedList/SinglyLinkedList.h" // Include your LinkedList header
 #include "DoublyLinkedList/DoublyLinkedList.h"
+#include "CircularLinkedList/CircularLinkedList.h"
+
 #include <iostream>
 
 int check(ILinkedList<int>* list, char* name);
@@ -12,6 +14,9 @@ int main() {
     ILinkedList<int>* doubly_list = new DoublyLinkedList<int>();
     check(doubly_list, "DoublyLinkedList");
     delete doubly_list;
+    ILinkedList<int>* circular_list = new SinglyLinkedList<int>();
+    check(circular_list, "CircularLinkedList");
+    delete circular_list;
 }
 
 // Custom print function for demonstration
@@ -21,7 +26,7 @@ void print_int(int data) {
 
 int check(ILinkedList<int>* list, char* name) {
 
-    std::cout << "--------------" << name << "----------------";
+    std::cout << "--------------" << name << "----------------\n";
 
     // Add elements to the list
     list->add_start(1);

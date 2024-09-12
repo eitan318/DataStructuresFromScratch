@@ -280,7 +280,7 @@ inline void CircularLinkedList<T>::replace(int one_idx, int second_idx) {
         node2 = node2->next;
     }
 
-    //tried data swap witch is simpler tham pointer swap
+    //tried data swap witch is simpler than pointer swap
     std::swap(node1->data, node2->data);
 }
 
