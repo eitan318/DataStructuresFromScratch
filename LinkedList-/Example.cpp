@@ -1,6 +1,8 @@
 #include "SinglyLinkedList/SinglyLinkedList.h" // Include your LinkedList header
 #include "DoublyLinkedList/DoublyLinkedList.h"
 #include "CircularLinkedList/CircularLinkedList.h"
+#include "DoublyCircularLinkedList/DoublyCircularLinkedList.h"
+
 
 #include <iostream>
 
@@ -17,6 +19,9 @@ int main() {
     ILinkedList<int>* circular_list = new SinglyLinkedList<int>();
     check(circular_list, "CircularLinkedList");
     delete circular_list;
+    ILinkedList<int>* doubly_circular_list = new DoublyLinkedList<int>();
+    check(doubly_circular_list, "DoublyCircularLinkedList");
+    delete doubly_circular_list;
 }
 
 // Custom print function for demonstration
