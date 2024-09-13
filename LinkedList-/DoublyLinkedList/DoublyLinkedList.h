@@ -326,7 +326,6 @@ void DoublyLinkedList<T>::set_last(T new_value) {
 }
 
 
-//todo
 template <typename T>
 void DoublyLinkedList<T>::reverse() {
     if (this->count <= 1) {

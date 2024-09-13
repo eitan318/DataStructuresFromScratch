@@ -108,28 +108,28 @@ bool DoublyCircularLinkedList<T>::remove_node(T node_data) {
     }
 
     Node* curr = this->head;
-    Node* prev = nullptr;
 
     do {
         if (curr->data == node_data) {
-            if (prev) {
-                prev->next = curr->next;
-                curr->next->prev = prev;
-            } else {
-                this->head = curr->next;
-                if (this->count == 1) {
+            if (curr == this->head) {
+                // Update the head pointer
+                if (this->head->next == this->head) {
+                    // Only one node in the list
                     this->head = nullptr;
                 } else {
-                    Node* tail = curr->prev;
-                    this->head->prev = tail;
-                    tail->next = this->head;
+                    this->head = curr->next;
+                    curr->prev->next = curr->next;
+                    curr->next->prev = curr->prev;
                 }
+            } else {
+                curr->prev->next = curr->next;
+                curr->next->prev = curr->prev;
             }
+
             delete curr;
             this->count--;
             return true;
         }
-        prev = curr;
         curr = curr->next;
     } while (curr != this->head);
 
@@ -288,9 +288,7 @@ void DoublyCircularLinkedList<T>::insert_at(T data, int idx) {
 
 template <typename T>
 T DoublyCircularLinkedList<T>::get(int idx) {
-    Node* curr = this->find_node_at(idx);
-
-    return curr->data;
+    return this->find_node_at(idx)->data;
 }
 
 template <typename T>
@@ -304,9 +302,8 @@ T DoublyCircularLinkedList<T>::get_last() {
 
 template <typename T>
 void DoublyCircularLinkedList<T>::set(int idx, T new_value) {
-    Node* curr = this->find_node_at(idx);
-
-    curr->data = new_value;
+    Node* node = this->find_node_at(idx);
+    node->data = new_value;
 }
 
 
@@ -319,8 +316,6 @@ void DoublyCircularLinkedList<T>::set_last(T new_value) {
     this->head->prev->data = new_value;
 }
 
-
-//todo
 template <typename T>
 void DoublyCircularLinkedList<T>::reverse() {
     if (this->count <= 1) {
@@ -383,6 +378,7 @@ void DoublyCircularLinkedList<T>::move_node(int idx_from, int idx_to) {
 
         prev_target->next = node_to_move;
     } else {
+        // Insert node_to_move before\(instead of) the target node (second node)
         Node* target = nodes.second;
         node_to_move->next = target;
         node_to_move->prev = target->prev;
@@ -404,8 +400,7 @@ int DoublyCircularLinkedList<T>::Count() {
 }
 
 template <typename T>
-inline bool DoublyCircularLinkedList<T>::is_empty()
-{
+inline bool DoublyCircularLinkedList<T>::is_empty(){
     return this->count == 0;
 }
 
@@ -469,10 +464,6 @@ DoublyCircularLinkedList<T>::~DoublyCircularLinkedList() {
         remove_at(0);
     }
 }
-
-
-
-
 
 
 #endif // DOUBLYCIRCULARLINKEDLIST_H
